@@ -14,6 +14,8 @@ Board::Board(int p_size, int p_win, char p_max, char p_min, char p_empty){
         throw std::range_error("Size of a board cannot be less than one.");
     }
 
+    max_won_game = false;
+    min_won_game = false;
     size = p_size;
     win_num = p_win;
     maximizer_sym = p_max;
@@ -73,17 +75,21 @@ void Board::make_move(int i, int j, bool maximizer){
     }
 }
 
+void Board::clear_move(int i, int j){
+    fields[i][j] = empty_sym;
+}
+
 bool Board::is_move_available(int i, int j){
     if(i > size-1 || j > size-1 || i < 0 || j < 0){
         std::cerr << "Cannot move to given position because it is out of range." << std::endl;
         return false;
     }
     if(is_full()){
-        std::cerr << "Cannot move to given position because the baord is full." << std::endl;
+        // std::cerr << "Cannot move to given position because the board is full." << std::endl;
         return false;
     }
     if(fields[i][j] != empty_sym){
-        std::cerr << "Cannot move to given position because it is not free." << std::endl;
+        // std::cerr << "Cannot move to given position because it is not free." << std::endl;
         return false;
     }
     return true; 

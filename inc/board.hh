@@ -9,12 +9,15 @@ private:
     char minimizer_sym;
     char empty_sym;
     char** fields;
+    bool max_won_game;
+    bool min_won_game;
 public:
     Board(int p_size, int p_win, char p_max, char p_min, char p_empty);
     ~Board();
 
     void display();
     void make_move(int i, int j, bool maximizer);
+    void clear_move(int i, int j);
     bool is_move_available(int i, int j);
     bool is_full();
 

@@ -1,8 +1,10 @@
 #include <iostream>
+#include <algorithm>
 
 #include "board.hh"
 
 #define IMPOSSIBLE_SITUATION -1000
+#define INF_SUBSTITUTE 10000
 
 
 bool vertical_win(Board &board, bool maximizer){
@@ -201,17 +203,76 @@ bool diagonal_win(Board &board, bool maximizer){
     return false;
 }
 
+bool x_won(Board &board, bool maximizer){
+    if(diagonal_win(board, maximizer)) return true;
+    if(vertical_win(board, maximizer)) return true;
+    if(horizontal_win(board, maximizer)) return true;
+    return false;
+}
+
 int evaluate(Board &board){
-    bool max_won, min_won;
+    bool max_won = false, min_won = false;
     int board_size = board.get_size();
     int winning_size = board.get_win_num();
     int temp_counter;
 
     // Checking if maximizer won
-    
-    // Horizontally
-    if(horizontal_win(board, true)) return 5;
-    if(vertical_win(board, true)) return 7;
-    if(diagonal_win(board, true)) return 100;
+    if(horizontal_win(board, true)) max_won = true;
+    if(vertical_win(board, true)) max_won = true;
+    if(diagonal_win(board, true)) max_won = true;
+
+    // Checking if minimizer won
+    if(horizontal_win(board, false)) min_won = true;
+    if(vertical_win(board, false)) min_won = true;
+    if(diagonal_win(board, false)) min_won = true;
+
+    if(min_won && max_won) return IMPOSSIBLE_SITUATION;
+    if(min_won) return -10;
+    if(max_won) return +10;
     return 0;
 }
+
+int minimax_alpha_beta(Board &board, int depth, int alpha, int beta, bool maximizers_turn){
+    int eval, max_eval;
+    int board_size = board.get_size();
+    
+    if(depth == 0 || board.is_full()) return evaluate(board);
+
+    if(maximizers_turn){
+        max_eval = -INF_SUBSTITUTE;
+        for(int i=0; i<board_size; i++){
+            for(int j=0; j<board_size; j++){
+                if(board.is_move_available(i, j)){
+                    board.make_move(i, j, true);
+                    eval = minimax_alpha_beta(board, depth-1, alpha, beta, false);
+                    max_eval = std::max(max_eval, eval);
+                    alpha = std::max(alpha, eval);
+                    board.clear_move(i, j);
+                    if(beta <= alpha){
+                        return max_eval;
+                    }
+                }
+            }
+        }
+        return max_eval;
+    }
+    else{
+        max_eval = INF_SUBSTITUTE;
+        for(int i=0; i<board_size; i++){
+            for(int j=0; j<board_size; j++){
+                if(board.is_move_available(i, j)){
+                    board.make_move(i, j, false);
+                    eval = minimax_alpha_beta(board, depth-1, alpha, beta, true);
+                    max_eval = std::min(max_eval, eval);
+                    beta = std::max(beta, eval);
+                    board.clear_move(i, j);
+                    if(beta <= alpha){
+                        return max_eval;
+                    }
+                }
+            }
+        }
+        return max_eval;
+    }
+}
+
