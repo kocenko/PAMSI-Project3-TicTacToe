@@ -6,7 +6,7 @@
 
 int main(){
     int row, column;
-    Board board(4, 3, 'x', 'o', '_');
+    Board board(5, 3, 'x', 'o', '_');
     board.display();
 
     while(!board.is_full()){

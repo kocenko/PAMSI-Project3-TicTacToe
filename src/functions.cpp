@@ -91,8 +91,8 @@ bool top2bot_diagonal_win(Board &board, bool maximizer){
 
     temp_counter = 0;
     for(int i=0; i<board_size; i++){
-        for(int j=i; j+i<board_size; j++){
-            if(board(j+i, j) == sym){
+        for(int j=0; j<board_size-i; j++){
+            if(board(i+j, j) == sym){
                 temp_counter++;   
             }
             else{
@@ -115,7 +115,7 @@ bool top2bot_diagonal_win(Board &board, bool maximizer){
 
     temp_counter = 0;
     for(int i=0; i<board_size; i++){
-        for(int j=i; j+i<board_size; j++){
+        for(int j=0; j<board_size-i; j++){
             if(board(j, i+j) == sym){
                 temp_counter++;   
             }
@@ -154,8 +154,8 @@ bool bot2top_diagonal_win(Board &board, bool maximizer){
 
     temp_counter = 0;
     for(int i=0; i<board_size; i++){
-        for(int j=0; j+i<board_size; j++){ // Wrong indexes
-            if(board(board_size-1-j, j) == sym){
+        for(int j=0; j<board_size-i; j++){
+            if(board(board_size-1-i-j, j) == sym){
                 temp_counter++;   
             }
             else{
@@ -178,8 +178,8 @@ bool bot2top_diagonal_win(Board &board, bool maximizer){
 
     temp_counter = 0;
     for(int i=0; i<board_size; i++){
-        for(int j=i; j+i<board_size; j++){
-            if(board(board_size-1-j, i+j) == sym){
+        for(int j=board_size-1; j>=i; j--){
+            if(board(j, board_size-1-j+i) == sym){
                 temp_counter++;   
             }
             else{
