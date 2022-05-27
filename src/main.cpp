@@ -11,7 +11,7 @@ struct Move{
     int row, column;
 };
 
-Move choose_move(Board &board, int depth, int alpha, int beta, bool maximizers_turn){
+Move choose_move(Board board, int depth, int alpha, int beta, bool maximizers_turn){
     Move best_move;
     int best_move_value = INF_SUBSTITUTE;
     int move_value;
@@ -48,7 +48,7 @@ Move choose_move(Board &board, int depth, int alpha, int beta, bool maximizers_t
 
 int main(){
     int row, column;
-    Board board(3, 3, 'x', 'o', '_');
+    Board board(5, 3, 'x', 'o', '_');
     Move opponent_move, player_move;
     board.display();
 
@@ -57,9 +57,9 @@ int main(){
         // std::cin >> row;
         // std::cin >> column;
         // std::cout << std::endl;
-        player_move = choose_move(board, 3, -INF_SUBSTITUTE, INF_SUBSTITUTE, true);
+        player_move = choose_move(board, 4, -INF_SUBSTITUTE, INF_SUBSTITUTE, true);
         board.make_move(player_move.row, player_move.column, true);
-        opponent_move = choose_move(board, 3, -INF_SUBSTITUTE, INF_SUBSTITUTE, false);
+        opponent_move = choose_move(board, 4, -INF_SUBSTITUTE, INF_SUBSTITUTE, false);
         board.make_move(opponent_move.row, opponent_move.column, false);
         board.display();
 

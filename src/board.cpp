@@ -14,8 +14,6 @@ Board::Board(int p_size, int p_win, char p_max, char p_min, char p_empty){
         throw std::range_error("Size of a board cannot be less than one.");
     }
 
-    max_won_game = false;
-    min_won_game = false;
     size = p_size;
     win_num = p_win;
     maximizer_sym = p_max;
@@ -33,6 +31,38 @@ Board::Board(int p_size, int p_win, char p_max, char p_min, char p_empty){
             fields[i][j] = empty_sym;
         }
     }
+
+    available_moves = new bool[p_size*p_size];
+
+    for(int i=0; i<p_size*p_size; i++){
+        available_moves[i] = true;
+    }
+}
+
+Board::Board(const Board& to_copy){
+    size = to_copy.size;
+    win_num = to_copy.win_num;
+    maximizer_sym = to_copy.maximizer_sym;
+    minimizer_sym = to_copy.minimizer_sym;
+    empty_sym = to_copy.empty_sym;
+
+    fields = new char*[to_copy.size];
+
+    for(int i=0; i<to_copy.size; i++){
+        fields[i] = new char[to_copy.size];
+    }
+
+    for(int i=0; i<to_copy.size; i++){
+        for(int j=0; j<to_copy.size; j++){
+            fields[i][j] = to_copy(i, j);
+        }
+    }
+
+    available_moves = new bool[to_copy.size*to_copy.size];
+
+    for(int i=0; i<to_copy.size*to_copy.size; i++){
+        available_moves[i] = to_copy.available_moves[i];
+    }
 }
 
 Board::~Board(){
@@ -40,6 +70,7 @@ Board::~Board(){
         delete[] fields[i];
     }
     delete[] fields;
+    delete[] available_moves;
 }
 
 void Board::display(){
@@ -63,20 +94,17 @@ void Board::display(){
 
 void Board::make_move(int i, int j, bool maximizer){
     char sym;
-    if(maximizer){
-        sym = maximizer_sym;
-    }
-    else{
-        sym = minimizer_sym;
-    }
+    sym = (maximizer) ? maximizer_sym : minimizer_sym;
 
     if(is_move_available(i,j)){
         fields[i][j] = sym;
+        available_moves[i*size+j] = false;
     }
 }
 
 void Board::clear_move(int i, int j){
     fields[i][j] = empty_sym;
+    available_moves[i*size+j] = true;
 }
 
 bool Board::is_move_available(int i, int j){
@@ -88,7 +116,7 @@ bool Board::is_move_available(int i, int j){
         // std::cerr << "Cannot move to given position because the board is full." << std::endl;
         return false;
     }
-    if(fields[i][j] != empty_sym){
+    if(!available_moves[i*size+j]){
         // std::cerr << "Cannot move to given position because it is not free." << std::endl;
         return false;
     }
@@ -96,12 +124,8 @@ bool Board::is_move_available(int i, int j){
 }
 
 bool Board::is_full(){
-    for(int i=0; i<size; i++){
-        for(int j=0; j<size; j++){
-            if(fields[i][j] == empty_sym){
-                return false;
-            }
-        }
+    for(int i=0; i<size*size; i++){
+        if(available_moves[i]) return false;
     }
     return true;
 }

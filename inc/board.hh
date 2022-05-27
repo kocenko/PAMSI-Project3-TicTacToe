@@ -9,10 +9,10 @@ private:
     char minimizer_sym;
     char empty_sym;
     char** fields;
-    bool max_won_game;
-    bool min_won_game;
+    bool* available_moves;
 public:
     Board(int p_size, int p_win, char p_max, char p_min, char p_empty);
+    Board(const Board& to_copy);
     ~Board();
 
     void display();

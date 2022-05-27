@@ -7,18 +7,13 @@
 #define INF_SUBSTITUTE 10000
 
 
-bool vertical_win(Board &board, bool maximizer){
-   int board_size = board.get_size();
-   int winning_size = board.get_win_num();
-   int temp_counter;
-   
-   char sym;
-    if(maximizer){
-        sym = board.get_max_sym();
-    }
-    else{
-        sym = board.get_min_sym();
-    }
+bool vertical_win(Board board, bool maximizer){
+    int board_size = board.get_size();
+    int winning_size = board.get_win_num();
+    int temp_counter;
+    char sym;
+
+    sym = (maximizer) ? board.get_max_sym() : board.get_min_sym();
 
     temp_counter = 0;
     for(int i=0; i<board_size; i++){
@@ -39,18 +34,13 @@ bool vertical_win(Board &board, bool maximizer){
     return false;
 }
 
-bool horizontal_win(Board &board, bool maximizer){
+bool horizontal_win(Board board, bool maximizer){
     int board_size = board.get_size();
     int winning_size = board.get_win_num();
     int temp_counter;
-
     char sym;
-    if(maximizer){
-        sym = board.get_max_sym();
-    }
-    else{
-        sym = board.get_min_sym();
-    }
+
+    sym = (maximizer) ? board.get_max_sym() : board.get_min_sym();
 
     temp_counter = 0;
     for(int i=0; i<board_size; i++){
@@ -71,18 +61,13 @@ bool horizontal_win(Board &board, bool maximizer){
     return false;
 }
 
-bool top2bot_diagonal_win(Board &board, bool maximizer){
+bool top2bot_diagonal_win(Board board, bool maximizer){
     int board_size = board.get_size();
     int winning_size = board.get_win_num();
     int temp_counter;
-
     char sym;
-    if(maximizer){
-        sym = board.get_max_sym();
-    }
-    else{
-        sym = board.get_min_sym();
-    }
+
+    sym = (maximizer) ? board.get_max_sym() : board.get_min_sym();
 
     // Top to bottom
     /*
@@ -134,18 +119,13 @@ bool top2bot_diagonal_win(Board &board, bool maximizer){
     return false;
 }
 
-bool bot2top_diagonal_win(Board &board, bool maximizer){
+bool bot2top_diagonal_win(Board board, bool maximizer){
     int board_size = board.get_size();
     int winning_size = board.get_win_num();
     int temp_counter;
-
     char sym;
-    if(maximizer){
-        sym = board.get_max_sym();
-    }
-    else{
-        sym = board.get_min_sym();
-    }
+    
+    sym = (maximizer) ? board.get_max_sym() : board.get_min_sym();
 
     // Bottom to top
     /*
@@ -197,20 +177,20 @@ bool bot2top_diagonal_win(Board &board, bool maximizer){
     return false;
 }
 
-bool diagonal_win(Board &board, bool maximizer){
+bool diagonal_win(Board board, bool maximizer){
     if(top2bot_diagonal_win(board, maximizer)) return true;
     if(bot2top_diagonal_win(board, maximizer)) return true;
     return false;
 }
 
-bool x_won(Board &board, bool maximizer){
+bool x_won(Board board, bool maximizer){
     if(diagonal_win(board, maximizer)) return true;
     if(vertical_win(board, maximizer)) return true;
     if(horizontal_win(board, maximizer)) return true;
     return false;
 }
 
-int evaluate(Board &board){
+int evaluate(Board board){
     bool max_won = false, min_won = false;
     int board_size = board.get_size();
     int winning_size = board.get_win_num();
@@ -232,7 +212,7 @@ int evaluate(Board &board){
     return 0;
 }
 
-int minimax_alpha_beta(Board &board, int depth, int alpha, int beta, bool maximizers_turn){
+int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximizers_turn){
     int eval, max_eval;
     int board_size = board.get_size();
     
@@ -247,7 +227,6 @@ int minimax_alpha_beta(Board &board, int depth, int alpha, int beta, bool maximi
                     eval = minimax_alpha_beta(board, depth-1, alpha, beta, false);
                     max_eval = std::max(max_eval, eval);
                     alpha = std::max(alpha, eval);
-                    board.clear_move(i, j);
                     if(beta <= alpha){
                         return max_eval;
                     }
@@ -265,7 +244,6 @@ int minimax_alpha_beta(Board &board, int depth, int alpha, int beta, bool maximi
                     eval = minimax_alpha_beta(board, depth-1, alpha, beta, true);
                     max_eval = std::min(max_eval, eval);
                     beta = std::max(beta, eval);
-                    board.clear_move(i, j);
                     if(beta <= alpha){
                         return max_eval;
                     }
