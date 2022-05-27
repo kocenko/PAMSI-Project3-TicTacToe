@@ -20,6 +20,7 @@ public:
     void clear_move(int i, int j);
     bool is_move_available(int i, int j);
     bool is_full();
+    void display_available_moves();
 
     // Winning
     bool horizontal_win(bool maximizer);

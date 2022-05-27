@@ -131,6 +131,14 @@ bool Board::is_full(){
     return true;
 }
 
+void Board::display_available_moves(){
+    std::cout << std::endl << "Available moves: ";
+    for(int i=0; i<size*size; i++){
+        if(available_moves[i]) std::cout << i << " ";
+    }
+    std::cout << std::endl;
+}
+
 bool Board::vertical_win(bool maximizer){
     int temp_counter;
     char sym;

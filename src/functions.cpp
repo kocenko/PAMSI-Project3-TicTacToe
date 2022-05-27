@@ -21,8 +21,8 @@ int evaluate(Board board, int depth){
     if(board.x_won(false)) min_won = true;
 
     if(min_won && max_won) return IMPOSSIBLE_SITUATION;
-    if(min_won) return -10 + depth;
-    if(max_won) return +10 - depth;
+    if(min_won) return -100 - depth;
+    if(max_won) return +100 + depth;
     return 0;
 }
 
@@ -30,11 +30,20 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
     int eval, max_eval, min_eval, row_idx, col_idx;
     int board_size = board.get_size();
     
+    // std::cout << "====================" << std::endl;
+    // board.display();
+    // board.display_available_moves();
+    // std::cout << "Evaluation: " << evaluate(board, depth);
+    // std::cout << std::endl;
+    // std::cout << "Termination condition: " << (depth == 0 || board.game_over()) << std::endl;
+
     if(depth == 0 || board.game_over()){
-        board.display();
-        std::cout << "Evaluated: " << evaluate(board, depth) << std::endl;
+        // board.display();
+        // std::cout << "Evaluated: " << evaluate(board, depth) << std::endl;
         return evaluate(board, depth);
     }
+
+    // std::cout << "Is it maximizer's turn: " << maximizers_turn << std::endl;
 
     if(maximizers_turn){
         max_eval = -INF_SUBSTITUTE;
@@ -43,10 +52,12 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
             col_idx = i%board_size;
 
             if(board.is_move_available(row_idx, col_idx)){
+                // std::cout << "Maximizer's available move: [" << row_idx << "; " << col_idx << "]" << std::endl;
                 board.make_move(row_idx, col_idx, true);
                 eval = minimax_alpha_beta(board, depth-1, alpha, beta, false);
                 max_eval = std::max(max_eval, eval);
                 alpha = std::max(alpha, eval);
+                board.clear_move(row_idx, col_idx);
                 if(beta <= alpha){
                     break;
                 }
@@ -61,10 +72,12 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
             col_idx = i%board_size;
 
             if(board.is_move_available(row_idx, col_idx)){
+                // std::cout << "Minimizer's available move: [" << row_idx << "; " << col_idx << "]" << std::endl;
                 board.make_move(row_idx, col_idx, false);
                 eval = minimax_alpha_beta(board, depth-1, alpha, beta, true);
                 min_eval = std::min(min_eval, eval);
                 beta = std::min(beta, eval);
+                board.clear_move(row_idx, col_idx);
                 if(beta <= alpha){
                     break;
                 }
@@ -86,7 +99,7 @@ Move choose_move(Board board, int depth, int alpha, int beta, bool maximizers_tu
         for(int j=0; j<board_size; j++){
             if(board.is_move_available(i, j)){
                 board.make_move(i, j, maximizers_turn);
-                move_value = minimax_alpha_beta(board, depth, alpha, beta, maximizers_turn);
+                move_value = minimax_alpha_beta(board, depth, alpha, beta, !maximizers_turn);
                 board.clear_move(i, j);
 
                 if(maximizers_turn){
