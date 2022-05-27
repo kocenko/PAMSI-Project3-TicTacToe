@@ -21,12 +21,24 @@ public:
     bool is_move_available(int i, int j);
     bool is_full();
 
+    // Winning
+    bool horizontal_win(bool maximizer);
+    bool vertical_win(bool maximizer);
+    bool diagonal_win(bool maximizer);
+    bool x_won(bool maximizer);
+    bool top2bot_diagonal_win(bool maximizer);
+    bool bot2top_diagonal_win(bool maximizer);
+    bool game_over();
+
     // Getters
     int get_size() const;
     int get_win_num() const;
     char get_max_sym() const;
     char get_min_sym() const;
     char get_empty_sym() const;
+
+    // Setters
+    void set_fields(std::string tab);
 
     // Overloading
     const char & operator() (int row, int column);

@@ -110,6 +110,7 @@ void Board::clear_move(int i, int j){
 bool Board::is_move_available(int i, int j){
     if(i > size-1 || j > size-1 || i < 0 || j < 0){
         std::cerr << "Cannot move to given position because it is out of range." << std::endl;
+        std::cerr << "i: " << i << " j: " << j << " size-1: " << size << std::endl;
         return false;
     }
     if(is_full()){
@@ -128,6 +129,147 @@ bool Board::is_full(){
         if(available_moves[i]) return false;
     }
     return true;
+}
+
+bool Board::vertical_win(bool maximizer){
+    int temp_counter;
+    char sym;
+
+    sym = (maximizer) ? maximizer_sym : minimizer_sym;
+
+    temp_counter = 0;
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size; j++){
+            temp_counter = (fields[j][i] == sym) ? temp_counter+1 : 0;
+            if(temp_counter == win_num) return true;
+        }
+        temp_counter = 0;
+    }
+    return false;
+}
+
+bool Board::horizontal_win(bool maximizer){
+    int temp_counter;
+    char sym;
+
+    sym = (maximizer) ? maximizer_sym : minimizer_sym;
+
+    temp_counter = 0;
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size; j++){
+            temp_counter = (fields[i][j] == sym) ? temp_counter + 1 : 0;
+            if(temp_counter == win_num) return true;
+        }
+        temp_counter = 0;
+    }
+    return false;
+}
+
+bool Board::top2bot_diagonal_win(bool maximizer){
+    int temp_counter;
+    char sym;
+
+    sym = (maximizer) ? maximizer_sym : minimizer_sym;
+
+    // Top to bottom
+    /*
+    [*][ ][ ]      [ ][ ][ ]      [ ][ ][ ]
+    [ ][*][ ] ---> [*][ ][ ] ---> [ ][ ][ ]
+    [ ][ ][*]      [ ][*][ ]      [*][ ][ ]
+    */
+
+    temp_counter = 0;
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size-i; j++){
+            temp_counter = (fields[i+j][j] == sym) ? temp_counter + 1 : 0;
+            if(temp_counter == win_num) return true;
+        }
+        temp_counter = 0;
+    }
+    
+    // Top to bottom
+    /*
+    [*][ ][ ]      [ ][*][ ]      [ ][ ][*]
+    [ ][*][ ] ---> [ ][ ][*] ---> [ ][ ][ ]
+    [ ][ ][*]      [ ][ ][ ]      [ ][ ][ ]
+    */
+
+    temp_counter = 0;
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size-i; j++){
+            temp_counter = (fields[j][i+j] == sym) ? temp_counter + 1 : 0;
+            if(temp_counter == win_num) return true;
+        }
+        temp_counter = 0;
+    }
+    return false;
+}
+
+bool Board::bot2top_diagonal_win(bool maximizer){
+    int temp_counter;
+    char sym;
+    
+    sym = (maximizer) ? maximizer_sym : minimizer_sym;
+
+    // Bottom to top
+    /*
+    [ ][ ][*]      [ ][*][ ]      [*][ ][ ]
+    [ ][*][ ] ---> [*][ ][ ] ---> [ ][ ][ ]
+    [*][ ][ ]      [ ][ ][ ]      [ ][ ][ ]
+    */
+
+    temp_counter = 0;
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size-i; j++){
+            temp_counter = (fields[size-1-i-j][j] == sym) ? temp_counter + 1 : 0;
+            if(temp_counter == win_num) return true;
+        }
+        temp_counter = 0;
+    }
+    
+    // Top to bottom
+    /*
+    [ ][ ][*]      [ ][ ][ ]      [ ][ ][ ]
+    [ ][*][ ] ---> [ ][ ][*] ---> [ ][ ][ ]
+    [*][ ][ ]      [ ][*][ ]      [ ][ ][*]
+    */
+
+    temp_counter = 0;
+    for(int i=0; i<size; i++){
+        for(int j=size-1; j>=i; j--){
+            temp_counter = (fields[j][size-1-j+i] == sym) ? temp_counter + 1 : 0;
+            if(temp_counter == size) return true;
+        }
+        temp_counter = 0;
+    }
+    return false;
+}
+
+bool Board::diagonal_win(bool maximizer){
+    if(top2bot_diagonal_win(maximizer)) return true;
+    if(bot2top_diagonal_win(maximizer)) return true;
+    return false;
+}
+
+bool Board::x_won(bool maximizer){
+    if(diagonal_win(maximizer)) return true;
+    if(vertical_win(maximizer)) return true;
+    if(horizontal_win(maximizer)) return true;
+    return false;
+}
+
+bool Board::game_over(){
+    if(is_full() || x_won(true) || x_won(false)){
+        return true;
+    }
+    return false;
+}
+
+void Board::set_fields(std::string tab){
+    for(int i=0; i<size*size; i++){
+        fields[i/size][i%size] = tab[i];
+        if(tab[i] != empty_sym) available_moves[i] = false;
+    }
 }
 
 int Board::get_size() const{
