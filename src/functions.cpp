@@ -2,14 +2,11 @@
 #include <algorithm>
 
 #include "board.hh"
+#include "move_struct.hh"
 
 #define IMPOSSIBLE_SITUATION 0
 #define INF_SUBSTITUTE 10000
 
-
-struct Move{
-    int row, column;
-};
 
 int evaluate(Board board, int depth){
     bool max_won = false, min_won = false;
@@ -27,7 +24,7 @@ int evaluate(Board board, int depth){
 }
 
 int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximizers_turn){
-    int eval, max_eval, min_eval, row_idx, col_idx;
+    int eval=0, max_eval=0, min_eval=0, row_idx=0, col_idx=0;
     int board_size = board.get_size();
     
     // std::cout << "====================" << std::endl;
@@ -53,10 +50,11 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
 
             if(board.is_move_available(row_idx, col_idx)){
                 // std::cout << "Maximizer's available move: [" << row_idx << "; " << col_idx << "]" << std::endl;
-                board.make_move(row_idx, col_idx, true);
-                eval = minimax_alpha_beta(board, depth-1, alpha, beta, false);
+                board.make_move(row_idx, col_idx, maximizers_turn);
+                eval = minimax_alpha_beta(board, depth-1, alpha, beta, !maximizers_turn);
                 max_eval = std::max(max_eval, eval);
                 alpha = std::max(alpha, eval);
+                // std::cout << "Alpha: " << alpha << std::endl;
                 board.clear_move(row_idx, col_idx);
                 if(beta <= alpha){
                     break;
@@ -73,10 +71,11 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
 
             if(board.is_move_available(row_idx, col_idx)){
                 // std::cout << "Minimizer's available move: [" << row_idx << "; " << col_idx << "]" << std::endl;
-                board.make_move(row_idx, col_idx, false);
-                eval = minimax_alpha_beta(board, depth-1, alpha, beta, true);
+                board.make_move(row_idx, col_idx, maximizers_turn);
+                eval = minimax_alpha_beta(board, depth-1, alpha, beta, !maximizers_turn);
                 min_eval = std::min(min_eval, eval);
                 beta = std::min(beta, eval);
+                // std::cout << "Beta: " << beta << std::endl;
                 board.clear_move(row_idx, col_idx);
                 if(beta <= alpha){
                     break;
@@ -88,9 +87,9 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
 }
 
 Move choose_move(Board board, int depth, int alpha, int beta, bool maximizers_turn){
-    Move best_move;
-    int best_move_value;
-    int move_value;
+    Move best_move = {0, 0, 0};
+    int best_move_value = 0;
+    int move_value = 0;
     int board_size = board.get_size();
     
     best_move_value = (maximizers_turn) ? -INF_SUBSTITUTE : INF_SUBSTITUTE;
@@ -107,6 +106,7 @@ Move choose_move(Board board, int depth, int alpha, int beta, bool maximizers_tu
                         best_move_value = move_value;
                         best_move.row = i;
                         best_move.column = j;
+                        best_move.value = move_value;
                     }
                 }
                 else{
@@ -114,6 +114,7 @@ Move choose_move(Board board, int depth, int alpha, int beta, bool maximizers_tu
                         best_move_value = move_value;
                         best_move.row = i;
                         best_move.column = j;
+                        best_move.value = move_value;
                     }
                 }
             }

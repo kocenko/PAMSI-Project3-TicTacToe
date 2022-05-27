@@ -2,11 +2,8 @@
 #define FUNCTIONS_HH
 
 #include "board.hh"
+#include "move_struct.hh"
 
-
-struct Move{
-    int row, column;
-};
 
 int evaluate(Board board, int depth);
 int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximizers_turn);
