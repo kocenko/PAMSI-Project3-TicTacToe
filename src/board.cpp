@@ -216,7 +216,7 @@ bool Board::top2bot_diagonal_win(bool maximizer){
 bool Board::bot2top_diagonal_win(bool maximizer){
     int temp_counter;
     char sym;
-    
+
     sym = (maximizer) ? maximizer_sym : minimizer_sym;
 
     // Bottom to top
