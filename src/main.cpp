@@ -12,8 +12,8 @@
 
 int main(){
     bool whose_turn = true;
-    bool player = true;
-    Board board(3, 3, 'x', 'o', '_');
+    bool player = !true;
+    Board board(5, 4, 'x', 'o', '_');
     Move current_move = {0, 0, 0};
 
     board.display();
@@ -27,8 +27,8 @@ int main(){
         }
         else{
             current_move = choose_move(board, 5, whose_turn);
+            std::cout << "Chosen move: [" << current_move.row << ", " << current_move.column << "] with value: " << current_move.value << std::endl; 
         }
-        std::cout << "Chosen move: [" << current_move.row << ", " << current_move.column << "] with value: " << current_move.value << std::endl; 
         board.make_move(current_move.row, current_move.column, whose_turn);
         board.display();
         whose_turn = !whose_turn;
