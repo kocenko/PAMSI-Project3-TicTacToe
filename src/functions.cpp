@@ -65,7 +65,6 @@ int minimax_alpha_beta(Board board, int depth, int alpha, int beta, bool maximiz
     }
 }
 
-
 Move choose_move(Board board, int depth, bool maximizers_turn){
     Move best_move = {0, 0, 0};
     int best_move_value = 0;
@@ -101,4 +100,45 @@ Move choose_move(Board board, int depth, bool maximizers_turn){
         }
     }
     return best_move;
+}
+
+void gameHandler(int board_size, int win_size, int depth, bool who_starts, bool human, bool info){
+    bool whose_turn = who_starts;
+    bool player = human;
+    Board board(board_size, win_size, 'x', 'o', '_');
+    Move current_move = {0, 0, 0};
+
+    board.display();
+
+    while(!board.game_over()){
+        std::cout << std::endl;
+        if(whose_turn && player){
+            do{
+                std::cout << "W jakie miejsce wstawic symbol [wiersz, kolumna]: ";
+                std::cin >> current_move.row;
+                std::cin >> current_move.column;
+            }
+            while(!board.is_move_available(current_move.row, current_move.column));
+        }
+        else{
+            current_move = choose_move(board, depth, whose_turn);
+            if(info){
+                std::cout << "Chosen move: ["
+                        << current_move.row << ", " << current_move.column 
+                        << "] with value: " << current_move.value << std::endl;
+            }
+        }
+        board.make_move(current_move.row, current_move.column, whose_turn);
+        board.display();
+        whose_turn = !whose_turn;
+    }
+    if(board.x_won(true)){
+        std::cout << "Wygral gracz rozpoczynajacy" << std::endl;
+    }
+    else if(board.x_won(false)){
+        std::cout << "Wygral gracz drugi" << std::endl;
+    }
+    else{
+        std::cout << "Remis" << std::endl;
+    }
 }
